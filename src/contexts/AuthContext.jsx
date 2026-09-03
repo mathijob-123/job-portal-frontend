@@ -212,9 +212,33 @@ export function AuthProvider({ children }) {
     }
 
     async function registerJobSeeker(email, password, profileData) {
-        const users = JSON.parse(localStorage.getItem('mock_auth_users') || '{}');
-        if (users[email]) throw new Error('User already exists');
+        // 1. Register with backend API (stores in Supabase users table)
+        try {
+            const res = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    role: 'jobseeker',
+                    phone: profileData?.phone || '',
+                    hrName: profileData?.name || ''
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                console.warn('Backend register returned status:', res.status, data.message);
+                if (data.message && data.message.toLowerCase().includes('already exists')) {
+                    throw new Error('User already exists with this email.');
+                }
+            }
+        } catch (err) {
+            console.warn('Backend registration error:', err.message);
+            if (err.message.includes('already exists')) throw err;
+        }
 
+        // 2. Also keep local session synchronized
+        const users = JSON.parse(localStorage.getItem('mock_auth_users') || '{}');
         const uid = generateId();
         const userData = { ...profileData, id: uid, role: 'jobseeker', createdAt: new Date().toISOString() };
         
@@ -230,9 +254,35 @@ export function AuthProvider({ children }) {
     }
 
     async function registerCompany(email, password, companyData) {
-        const users = JSON.parse(localStorage.getItem('mock_auth_users') || '{}');
-        if (users[email]) throw new Error('User already exists');
+        // 1. Register with backend API (stores in Supabase users table)
+        try {
+            const res = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    role: 'company',
+                    companyName: companyData?.companyName || '',
+                    hrName: companyData?.hrName || '',
+                    phone: companyData?.phone || '',
+                    address: companyData?.address || companyData?.location || ''
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                console.warn('Backend register returned status:', res.status, data.message);
+                if (data.message && data.message.toLowerCase().includes('already exists')) {
+                    throw new Error('User already exists with this email.');
+                }
+            }
+        } catch (err) {
+            console.warn('Backend registration error:', err.message);
+            if (err.message.includes('already exists')) throw err;
+        }
 
+        // 2. Also keep local session synchronized
+        const users = JSON.parse(localStorage.getItem('mock_auth_users') || '{}');
         const uid = generateId();
         const userData = { ...companyData, id: uid, role: 'company', status: 'approved', createdAt: new Date().toISOString() };
         
@@ -246,6 +296,7 @@ export function AuthProvider({ children }) {
 
         return await login(email, password);
     }
+
 
     const [verifiedMobile, setVerifiedMobile] = useState(() => localStorage.getItem('employer_verified_mobile') || '');
 

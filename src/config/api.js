@@ -2,7 +2,8 @@
 // If VITE_API_URL is set in Cloudflare Pages/Workers, it will be used.
 // Otherwise, it falls back to http://localhost:5000/api in local dev.
 
-export const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const RAW_API_URL = import.meta.env.VITE_API_URL || 'https://job-portal-revised-backend.vercel.app/api';
+
 
 // Strips any trailing slashes or '/api' suffix to get the root backend origin
 export const BACKEND_URL = RAW_API_URL.replace(/\/api\/?$/, '').replace(/\/+$/, '');
