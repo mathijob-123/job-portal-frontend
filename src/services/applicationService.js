@@ -1,4 +1,5 @@
 // Application Service with SQLite REST API integration & localStorage fallback
+import { API_BASE_URL } from '../config/api';
 
 const APPLICATIONS_KEY = 'mock_applications';
 const CANDIDATE_NOTIFS_KEY = 'candidate_notifications';
@@ -121,7 +122,7 @@ export async function createApplication(appData) {
 
     if (token) {
         try {
-            const res = await fetch('http://localhost:5000/api/applications/apply', {
+            const res = await fetch(`${API_BASE_URL}/applications/apply`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -221,7 +222,7 @@ export async function getApplicationsByJob(jobId) {
     const token = getSessionToken();
     if (token) {
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/job/${jobId}`, {
+            const res = await fetch(`${API_BASE_URL}/applications/job/${jobId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -257,7 +258,7 @@ export async function getApplicationsByUser(userId) {
     const token = getSessionToken();
     if (token) {
         try {
-            const res = await fetch('http://localhost:5000/api/applications/my-applications', {
+            const res = await fetch(`${API_BASE_URL}/applications/my-applications`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -296,7 +297,7 @@ export async function hasUserApplied(userId, jobId) {
     const token = getSessionToken();
     if (token && jobId) {
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/check-applied/${jobId}`, {
+            const res = await fetch(`${API_BASE_URL}/applications/check-applied/${jobId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -323,7 +324,7 @@ export async function updateApplicationStatus(appId, newStatus, extraData = {}) 
     const token = getSessionToken();
     if (token) {
         try {
-            await fetch('http://localhost:5000/api/applications/update-status', {
+            await fetch(`${API_BASE_URL}/applications/update-status`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

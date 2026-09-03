@@ -7,6 +7,7 @@ import {
     firebaseSignOut, 
     isFirebaseConfigured 
 } from '../firebase';
+import { API_BASE_URL } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -157,7 +158,7 @@ export function AuthProvider({ children }) {
         let realToken = null;
         let realUser = null;
         try {
-            const res = await fetch('http://localhost:5000/api/auth/login', {
+            const res = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -250,7 +251,7 @@ export function AuthProvider({ children }) {
 
     async function sendOtp(phone, countryCode = '+91') {
         try {
-            const res = await fetch('http://localhost:5000/api/auth/send-otp', {
+            const res = await fetch(`${API_BASE_URL}/auth/send-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone, countryCode })
@@ -272,7 +273,7 @@ export function AuthProvider({ children }) {
 
     async function verifyOtp(phone, otp) {
         try {
-            const res = await fetch('http://localhost:5000/api/auth/verify-otp', {
+            const res = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone, otp })
@@ -334,7 +335,7 @@ export function AuthProvider({ children }) {
 
     async function employerLogin(email, password) {
         try {
-            const res = await fetch('http://localhost:5000/api/auth/employer/login', {
+            const res = await fetch(`${API_BASE_URL}/auth/employer/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -388,7 +389,7 @@ export function AuthProvider({ children }) {
         }
 
         try {
-            const res = await fetch('http://localhost:5000/api/candidate/google', {
+            const res = await fetch(`${API_BASE_URL}/candidate/google`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(googleUser)
@@ -461,7 +462,7 @@ export function AuthProvider({ children }) {
         }
 
         try {
-            const res = await fetch('http://localhost:5000/api/auth/employer/google-login', {
+            const res = await fetch(`${API_BASE_URL}/auth/employer/google-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(googleAccount)
@@ -512,7 +513,7 @@ function safeSetLocalStorage(key, value) {
     async function createCompanyProfile(profileData) {
         let result = null;
         try {
-            const res = await fetch('http://localhost:5000/api/auth/employer/create-profile', {
+            const res = await fetch(`${API_BASE_URL}/auth/employer/create-profile`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(profileData)

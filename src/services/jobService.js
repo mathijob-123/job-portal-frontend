@@ -1,4 +1,5 @@
 // Mock & REST Job Service — supports SQLite API and localStorage fallback
+import { API_BASE_URL } from '../config/api';
 
 const JOBS_KEY = 'mock_jobs';
 
@@ -284,7 +285,7 @@ export async function createJob(jobData) {
     // Try posting to backend REST API
     try {
         const token = localStorage.getItem('mock_current_session') ? JSON.parse(localStorage.getItem('mock_current_session')).token : null;
-        const res = await fetch('http://localhost:5000/api/jobs/post', {
+        const res = await fetch(`${API_BASE_URL}/jobs/post`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -350,7 +351,7 @@ export async function getJob(jobId) {
 
     // Try backend REST endpoint first
     try {
-        const res = await fetch(`http://localhost:5000/api/jobs/${jobId}`);
+        const res = await fetch(`${API_BASE_URL}/jobs/${jobId}`);
         if (res.ok) {
             const data = await res.json();
             if (data && (data.id || data.job_id || data.jobId)) {
@@ -388,7 +389,7 @@ export async function getAllJobs() {
 export async function getOpenJobs() {
     let apiJobs = [];
     try {
-        const res = await fetch('http://localhost:5000/api/jobs/all');
+        const res = await fetch(`${API_BASE_URL}/jobs/all`);
         if (res.ok) {
             const rows = await res.json();
             if (Array.isArray(rows)) {
@@ -486,7 +487,7 @@ export async function updateJobStatus(jobId, status) {
     // Sync with backend API
     try {
         const token = localStorage.getItem('mock_current_session') ? JSON.parse(localStorage.getItem('mock_current_session')).token : null;
-        await fetch(`http://localhost:5000/api/jobs/${jobId}/status`, {
+        await fetch(`${API_BASE_URL}/jobs/${jobId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

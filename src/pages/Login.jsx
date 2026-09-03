@@ -87,7 +87,7 @@ export default function Login() {
 
     function validateMobile(phone) {
         const clean = phone.replace(/\D/g, '');
-        return clean.length >= 10 && clean.length <= 12;
+        return clean.length === 10;
     }
 
     // Step 1: Send OTP
@@ -189,6 +189,12 @@ export default function Login() {
     async function handleEmailPasswordSubmit(e) {
         e.preventDefault();
         setError('');
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return setError('Please enter a valid email address.');
+        }
+
         setLoading(true);
 
         try {
@@ -350,9 +356,12 @@ export default function Login() {
                                             <input 
                                                 type="tel"
                                                 value={mobileNumber}
-                                                onChange={(e) => setMobileNumber(e.target.value)}
-                                                placeholder="98765 43210"
-                                                maxLength={12}
+                                                onChange={(e) => {
+                                                    const numericValue = e.target.value.replace(/\D/g, '');
+                                                    setMobileNumber(numericValue);
+                                                }}
+                                                placeholder="10-digit mobile"
+                                                maxLength={10}
                                                 required
                                                 autoFocus
                                                 style={{

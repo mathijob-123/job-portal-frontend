@@ -1,4 +1,5 @@
 // Candidate Service — Manages Candidate Auth, Profile, Saved Jobs & Recommendations
+import { API_BASE_URL } from '../config/api';
 
 const CANDIDATES_KEY = 'mock_candidates';
 const SAVED_JOBS_KEY = 'mock_saved_jobs';
@@ -22,7 +23,7 @@ export function saveCandidatesToStorage(candidates) {
 // 1. Send OTP for candidate
 export async function sendCandidateOtp(mobileNumber, countryCode = '+91') {
     try {
-        const res = await fetch('http://localhost:5000/api/candidate/send-otp', {
+        const res = await fetch(`${API_BASE_URL}/candidate/send-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ mobileNumber, countryCode })
@@ -44,7 +45,7 @@ export async function sendCandidateOtp(mobileNumber, countryCode = '+91') {
 // 2. Verify OTP for candidate
 export async function verifyCandidateOtp(mobileNumber, countryCode = '+91', otp) {
     try {
-        const res = await fetch('http://localhost:5000/api/candidate/verify-otp', {
+        const res = await fetch(`${API_BASE_URL}/candidate/verify-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ mobileNumber, countryCode, otp })
@@ -76,7 +77,7 @@ export async function verifyCandidateOtp(mobileNumber, countryCode = '+91', otp)
 // 3. Save Candidate Profile (Multi-step)
 export async function saveCandidateProfile(profileData) {
     try {
-        const res = await fetch('http://localhost:5000/api/candidate/profile', {
+        const res = await fetch(`${API_BASE_URL}/candidate/profile`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(profileData)
@@ -133,7 +134,7 @@ function updateLocalStorageCandidate(candidateId, profileData) {
 // 4. Get Candidate Profile
 export async function getCandidateProfile(candidateId) {
     try {
-        const res = await fetch(`http://localhost:5000/api/candidate/profile/${candidateId}`);
+        const res = await fetch(`${API_BASE_URL}/candidate/profile/${candidateId}`);
         if (res.ok) {
             return await res.json();
         }
@@ -153,7 +154,7 @@ export async function toggleSaveJob(candidateId, jobId) {
         saved.splice(index, 1);
         safeSetLocalStorage(SAVED_JOBS_KEY, JSON.stringify(saved));
         try {
-            await fetch(`http://localhost:5000/api/candidate/save-job/${jobId}`, { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/candidate/save-job/${jobId}`, { method: 'DELETE' });
         } catch (e) {}
         return { isSaved: false, message: 'Removed from saved jobs' };
     } else {
@@ -161,7 +162,7 @@ export async function toggleSaveJob(candidateId, jobId) {
         saved.unshift({ candidate_id: candidateId, job_id: jobId, saved_at: new Date().toISOString() });
         safeSetLocalStorage(SAVED_JOBS_KEY, JSON.stringify(saved));
         try {
-            await fetch('http://localhost:5000/api/candidate/save-job', {
+            await fetch(`${API_BASE_URL}/candidate/save-job`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ candidateId, jobId })

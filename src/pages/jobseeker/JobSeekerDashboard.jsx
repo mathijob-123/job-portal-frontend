@@ -6,6 +6,7 @@ import { getApplicationsByUser } from '../../services/applicationService';
 import JobCard from '../../components/JobCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import CandidateSidebar from '../../components/CandidateSidebar';
+import { motion } from 'framer-motion';
 import { 
     FiBriefcase, FiFileText, FiUser, FiSearch, FiTrendingUp, FiCheckCircle, 
     FiClock, FiZap, FiActivity, FiStar, FiCheck, FiShield, FiArrowRight,
@@ -179,19 +180,22 @@ export default function JobSeekerDashboard() {
     return (
         <CandidateSidebar>
             {/* Header Greeting Banner */}
-            <div style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '24px',
-                padding: '32px',
-                marginBottom: '24px',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)'
-            }}>
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="glass-panel"
+                style={{
+                    padding: '32px',
+                    marginBottom: '24px',
+                    borderRadius: '24px'
+                }}
+            >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                             <h1 style={{ fontSize: '2.4rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
-                                Welcome, <span style={{ color: '#0ea5e9' }}>{userData?.name || currentUser?.displayName || 'Candidate'} 👋</span>
+                                Welcome, <span className="premium-gradient-text">{userData?.name || currentUser?.displayName || 'Candidate'} 👋</span>
                             </h1>
                             {candidatePerks?.isPremium && (
                                 <span style={{
@@ -217,34 +221,39 @@ export default function JobSeekerDashboard() {
 
                     <Link 
                         to="/jobseeker/subscriptions" 
+                        className="btn-primary-gradient"
                         style={{
                             display: 'inline-flex', alignItems: 'center', gap: '8px',
                             padding: '11px 22px', borderRadius: '12px',
-                            background: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
-                            color: '#ffffff', fontWeight: 700, fontSize: '0.92rem',
-                            textDecoration: 'none', boxShadow: '0 4px 12px rgba(14, 165, 233, 0.25)'
+                            fontWeight: 700, fontSize: '0.92rem',
+                            textDecoration: 'none'
                         }}
                     >
                         <FiStar style={{ color: '#fef08a' }} /> View Subscription Plans
                     </Link>
                 </div>
-            </div>
+            </motion.div>
 
-            {/* ── DYNAMIC JOB APPLICATION LIMIT PROGRESS BAR & WARNING (Requirement 2 & 13) ── */}
-            <div style={{
-                background: isLimitReached ? '#fff1f2' : '#ffffff',
-                border: isLimitReached ? '1.5px solid #fecdd3' : '1px solid #e2e8f0',
-                borderRadius: '20px',
-                padding: '24px 28px',
-                marginBottom: '28px',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.02)'
-            }}>
+            {/* ── DYNAMIC JOB APPLICATION LIMIT PROGRESS BAR ── */}
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={isLimitReached ? "" : "glass-panel"}
+                style={{
+                    background: isLimitReached ? '#fff1f2' : undefined,
+                    border: isLimitReached ? '1.5px solid #fecdd3' : undefined,
+                    borderRadius: '20px',
+                    padding: '24px 28px',
+                    marginBottom: '28px'
+                }}
+            >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <span style={{ fontSize: '1.25rem' }}>🎯</span>
                         <div>
                             <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
-                                Job Applications Quota: <span style={{ color: isLimitReached ? '#e11d48' : '#0284c7' }}>
+                                Job Applications Quota: <span style={{ color: isLimitReached ? '#e11d48' : '#0ea5e9' }}>
                                     {currentUsed} / {isUnlimited ? 'Unlimited' : currentLimit} Used
                                 </span>
                             </h3>
@@ -277,17 +286,19 @@ export default function JobSeekerDashboard() {
                 {/* Visual Progress Bar */}
                 {!isUnlimited && (
                     <div style={{ width: '100%', height: '10px', background: '#f1f5f9', borderRadius: '5px', overflow: 'hidden', marginTop: '8px' }}>
-                        <div style={{
-                            width: `${percentUsed}%`,
-                            height: '100%',
-                            background: isLimitReached ? '#e11d48' : (percentUsed > 75 ? '#f59e0b' : '#0ea5e9'),
-                            borderRadius: '5px',
-                            transition: 'width 0.3s ease'
-                        }} />
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${percentUsed}%` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            style={{
+                                height: '100%',
+                                background: isLimitReached ? '#e11d48' : (percentUsed > 75 ? '#f59e0b' : '#0ea5e9'),
+                                borderRadius: '5px'
+                            }} 
+                        />
                     </div>
                 )}
 
-                {/* Limit Reached Warning Message (Exact requirement format) */}
                 {isLimitReached && (
                     <div style={{
                         marginTop: '14px',
@@ -305,23 +316,28 @@ export default function JobSeekerDashboard() {
                         <span>You have reached your current job application limit. Upgrade your plan to continue applying for jobs.</span>
                     </div>
                 )}
-            </div>
+            </motion.div>
 
-            {/* ── DEDICATED MENTOR & CAREER GUIDANCE DESK (Requirement 5 & 6) ── */}
+            {/* ── DEDICATED MENTOR & CAREER GUIDANCE DESK ── */}
             {(candidatePerks?.dedicated_support || candidatePerks?.isPremium || candidatePerks?.mentor_guidance) && (
-                <div style={{
-                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                    color: 'white',
-                    padding: '26px 30px',
-                    borderRadius: '24px',
-                    marginBottom: '32px',
-                    boxShadow: '0 8px 24px rgba(15, 23, 42, 0.15)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: '20px'
-                }}>
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="premium-gradient-bg"
+                    style={{
+                        color: 'white',
+                        padding: '26px 30px',
+                        borderRadius: '24px',
+                        marginBottom: '32px',
+                        boxShadow: '0 8px 30px rgba(15, 23, 42, 0.2)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '20px'
+                    }}
+                >
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                             <span style={{ background: '#f59e0b', color: '#000', fontSize: '0.72rem', fontWeight: 800, padding: '3px 10px', borderRadius: '12px', textTransform: 'uppercase' }}>
@@ -339,7 +355,9 @@ export default function JobSeekerDashboard() {
                         </p>
                     </div>
 
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setShowMentorModal(true)}
                         style={{
                             background: '#ffffff',
@@ -357,14 +375,19 @@ export default function JobSeekerDashboard() {
                         }}
                     >
                         <FiUserCheck size={17} color="#7c3aed" /> Request Guidance Session
-                    </button>
-                </div>
+                    </motion.button>
+                </motion.div>
             )}
 
             {/* Candidate Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '36px' }}>
-                <div style={statCardStyle}>
-                    <div style={{ ...iconWrapperStyle, background: '#f0f9ff', color: '#0ea5e9' }}>
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="dashboard-grid"
+            >
+                <div className="glass-panel premium-card-hover" style={statCardStyle}>
+                    <div className="stat-icon-glow-blue" style={{ ...iconWrapperStyle, background: '#f0f9ff', color: '#0ea5e9' }}>
                         <FiCheckCircle />
                     </div>
                     <div>
@@ -373,8 +396,8 @@ export default function JobSeekerDashboard() {
                     </div>
                 </div>
 
-                <div style={statCardStyle}>
-                    <div style={{ ...iconWrapperStyle, background: '#f0fdf4', color: '#166534' }}>
+                <div className="glass-panel premium-card-hover" style={statCardStyle}>
+                    <div className="stat-icon-glow-green" style={{ ...iconWrapperStyle, background: '#f0fdf4', color: '#166534' }}>
                         <FiCheckCircle />
                     </div>
                     <div>
@@ -383,8 +406,8 @@ export default function JobSeekerDashboard() {
                     </div>
                 </div>
 
-                <div style={statCardStyle}>
-                    <div style={{ ...iconWrapperStyle, background: '#f3e8ff', color: '#7e22ce' }}>
+                <div className="glass-panel premium-card-hover" style={statCardStyle}>
+                    <div className="stat-icon-glow-purple" style={{ ...iconWrapperStyle, background: '#f3e8ff', color: '#7e22ce' }}>
                         <FiClock />
                     </div>
                     <div>
@@ -393,8 +416,8 @@ export default function JobSeekerDashboard() {
                     </div>
                 </div>
 
-                <div style={statCardStyle}>
-                    <div style={{ ...iconWrapperStyle, background: '#fef3c7', color: '#b45309' }}>
+                <div className="glass-panel premium-card-hover" style={statCardStyle}>
+                    <div className="stat-icon-glow-orange" style={{ ...iconWrapperStyle, background: '#fef3c7', color: '#b45309' }}>
                         <FiZap />
                     </div>
                     <div>
@@ -402,17 +425,20 @@ export default function JobSeekerDashboard() {
                         <div style={statLabelStyle}>Recommended Jobs</div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
-            {/* ── DYNAMIC CANDIDATE SUBSCRIPTION PLANS (Posted by Admin) ── */}
-            <div style={{
-                marginBottom: '48px',
-                padding: '32px',
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '24px',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)'
-            }}>
+            {/* ── DYNAMIC CANDIDATE SUBSCRIPTION PLANS ── */}
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="glass-panel"
+                style={{
+                    marginBottom: '48px',
+                    padding: '32px',
+                    borderRadius: '24px'
+                }}
+            >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -422,7 +448,7 @@ export default function JobSeekerDashboard() {
                             <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Boost Application Visibility</span>
                         </div>
                         <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                            Candidate <span style={{ color: '#0ea5e9' }}>Subscription Plans</span>
+                            Candidate <span className="premium-gradient-text">Subscription Plans</span>
                         </h2>
                     </div>
                     <Link to="/jobseeker/subscriptions" style={{ color: '#0ea5e9', textDecoration: 'none', fontWeight: 700, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -445,23 +471,26 @@ export default function JobSeekerDashboard() {
                         ];
 
                         return (
-                            <div
+                            <motion.div
                                 key={plan.id}
+                                whileHover={{ y: -8 }}
                                 style={{
-                                    background: isPopular ? '#f0f9ff' : '#ffffff',
+                                    background: isPopular ? '#f8fafc' : '#ffffff',
                                     borderRadius: '18px',
                                     padding: '24px',
                                     border: isPopular ? '2px solid #38bdf8' : '1px solid #e2e8f0',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    position: 'relative'
+                                    position: 'relative',
+                                    boxShadow: isPopular ? '0 12px 30px rgba(14, 165, 233, 0.1)' : '0 4px 15px rgba(0,0,0,0.03)'
                                 }}
                             >
                                 {isPopular && (
                                     <div style={{
                                         position: 'absolute', top: '-11px', right: '20px',
-                                        background: '#0ea5e9', color: 'white', fontSize: '0.72rem',
-                                        fontWeight: 800, padding: '3px 10px', borderRadius: '12px', textTransform: 'uppercase'
+                                        background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)', color: 'white', fontSize: '0.72rem',
+                                        fontWeight: 800, padding: '3px 10px', borderRadius: '12px', textTransform: 'uppercase',
+                                        boxShadow: '0 4px 10px rgba(14, 165, 233, 0.3)'
                                     }}>
                                         {plan.badge_text || 'Popular'}
                                     </div>
@@ -514,29 +543,35 @@ export default function JobSeekerDashboard() {
                                     <button
                                         onClick={() => handleSubscribe(plan)}
                                         disabled={processingPlanId === plan.id}
+                                        className={isPopular ? 'btn-primary-gradient' : ''}
                                         style={{
                                             width: '100%',
                                             padding: '10px',
                                             borderRadius: '10px',
                                             border: 'none',
-                                            background: isPopular ? '#0ea5e9' : (isFree ? '#f1f5f9' : '#0f172a'),
+                                            background: isPopular ? undefined : (isFree ? '#f1f5f9' : '#0f172a'),
                                             color: isFree ? '#334155' : '#ffffff',
                                             fontWeight: 700,
                                             fontSize: '0.88rem',
-                                            cursor: 'pointer'
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease'
                                         }}
                                     >
                                         {isFree ? 'Current Tier' : 'Upgrade Plan'}
                                     </button>
                                 )}
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>
-            </div>
+            </motion.div>
 
             {/* Recent Open Jobs */}
-            <div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+            >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
                         Matching Opportunities
@@ -551,12 +586,17 @@ export default function JobSeekerDashboard() {
                         <JobCard key={job.id} job={job} />
                     ))}
                 </div>
-            </div>
+            </motion.div>
 
             {/* ── MODAL: REQUEST MENTOR GUIDANCE SESSION ── */}
             {showMentorModal && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-                    <div style={{ background: '#ffffff', width: '100%', maxWidth: '520px', borderRadius: '24px', padding: '30px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        style={{ background: '#ffffff', width: '100%', maxWidth: '520px', borderRadius: '24px', padding: '30px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
+                    >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
                             <div>
                                 <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>
@@ -615,12 +655,12 @@ export default function JobSeekerDashboard() {
                                 <button type="button" onClick={() => setShowMentorModal(false)} style={{ background: '#f8fafc', border: '1px solid #cbd5e1', padding: '10px 18px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>
                                     Cancel
                                 </button>
-                                <button type="submit" disabled={submittingRequest} style={{ background: 'linear-gradient(135deg, #0ea5e9, #0284c7)', color: '#ffffff', border: 'none', padding: '10px 22px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}>
+                                <button type="submit" disabled={submittingRequest} className="btn-primary-gradient" style={{ border: 'none', padding: '10px 22px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}>
                                     {submittingRequest ? 'Submitting...' : 'Submit Request'}
                                 </button>
                             </div>
                         </form>
-                    </div>
+                    </motion.div>
                 </div>
             )}
         </CandidateSidebar>
@@ -628,34 +668,32 @@ export default function JobSeekerDashboard() {
 }
 
 const statCardStyle = {
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '16px',
-    padding: '20px',
+    padding: '24px',
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)'
+    borderRadius: '20px'
 };
 
 const iconWrapperStyle = {
-    width: '48px',
-    height: '48px',
-    borderRadius: '12px',
+    width: '56px',
+    height: '56px',
+    borderRadius: '16px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '1.4rem'
+    fontSize: '1.6rem'
 };
 
 const statValStyle = {
-    fontSize: '1.6rem',
-    fontWeight: 800,
-    color: '#0f172a'
+    fontSize: '1.8rem',
+    fontWeight: 900,
+    color: '#0f172a',
+    lineHeight: 1.2
 };
 
 const statLabelStyle = {
-    fontSize: '0.85rem',
-    fontWeight: 600,
+    fontSize: '0.9rem',
+    fontWeight: 700,
     color: '#64748b'
 };
